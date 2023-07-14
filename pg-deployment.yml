@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdb
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 0
+       maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: pdb
+  template:
+    metadata:
+      labels:
+        app: pdb
+    spec:
+      containers:
+        - name: pdb
+          image: postgres:14
+          ports:
+            - containerPort: 5432
+              protocol: tcp
+          envFrom:
+            - configMapRef:
+                name: db-data-param
+          env: 
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                 secretKeyRef:
+                   name: psc
+                   key: password
+          volumeMounts:
+            - mountPath: /var/lib/postgres/data
+              name: db-data
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: pvc
