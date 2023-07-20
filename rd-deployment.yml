@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rd
+  namespace: pdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rd
+  template:
+    metadata:
+      labels:
+        app: rd  
+  spec:
+    containers:
+    - image: redmine:4.1.1
+      ame: redmine
+      ports:
+      - containerPort: 3000
+        protocol: tcp
